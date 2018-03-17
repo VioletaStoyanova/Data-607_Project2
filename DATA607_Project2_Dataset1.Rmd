@@ -1,0 +1,62 @@
+---
+title: "Project2_Dataset1"
+author: "Violeta Stoyanova"
+date: "3/11/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+#The objective of Project 2 is to prepare data for downstream analysis. The following datasets were obtained from fivethirtyeight. com.
+#1. The first dataset that I worked with intends to prove the polarization of votes on Al Gore's sequel documentary called "An Inconvenient Sequel: Truth to Power." Movie ratings on a scale from 1 to 10 don't seem to be accurate and reliable. 
+"Al Gore’s New Movie Exposes The Big Flaw In Online Movie Ratings" 
+rm(list=ls())
+
+# Free up the memory
+gc()
+# first step is to load all the needed libraries 
+library(tidyverse)
+library(ggplot2)
+#next look at the dataset. I can see that the format of the data is "wide," therefore I will attempt to transform it into a "long"" one
+myurl1<-"https://raw.githubusercontent.com/fivethirtyeight/data/master/inconvenient-sequel/ratings.csv"
+ratings_data<- read.csv(myurl1, header = TRUE, stringsAsFactors = FALSE)
+dim(ratings_data)
+#Fix the column names to more readable names. 
+names(ratings_data)<-c("Timestamp","Respondents","Category","Link","Average","Mean","Median","1_Votes","2_Votes","3_Votes","4_Votes","5_Votes","6_Votes","7_Votes","8_Votes","9_Votes","10_Votes","1_Pct","2_Pct","3_Pct","4_Pct","5_pct","6_Pct","7_Pct","8_Pct","9_Pct","10_Pct")
+head(ratings_data)
+
+```
+
+
+
+```{r}
+#Next steps are to turn the Votes and Percent columns into two separate ones. I made sure to remove the link column since I don't need it. Also the timestamp I turned into three separate columns for the year, month and date, while removing the hour. 
+ratings_data <- ratings_data %>%
+  gather(Votes,Rank,8:17) %>% 
+  gather(Percent,Numbers,"1_Pct":"10_Pct") %>%
+  select(-Link) %>% 
+  mutate(Timestamp = trimws(unlist(str_extract_all(Timestamp, "[0-9-]+[ ]")), which = c("both"))) %>% 
+  separate(Timestamp, c("Year", "Month", "Date"), sep="-")
+  
+
+head(ratings_data)
+
+```
+
+
+```{r}
+#The plottong and the analysis shows that polarization of votes, which proves that possibly this particular system of rating movies is inefficient or valid. A future research could be done on voter's political affiliation or to what extend they support Al Gore. The findings can be then compared to voters' ratings. 
+plot(ratings_data$Median,ratings_data$Numbers,main="Plot of Median Ratings and Ranking", xlab="Median Ratings",ylab="Rank")
+
+```
+
+
+
+
+
+
+
+
