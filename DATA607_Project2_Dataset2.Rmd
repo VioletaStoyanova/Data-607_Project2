@@ -1,0 +1,67 @@
+---
+title: "TidyData"
+author: "Violeta Stoyanova"
+date: "2/28/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+#The second database deals with the number of police force that lives in the cities they serve in. It is also from fivethirtyeight.com   First, we load the data from github "Most Police Don’t Live In The Cities They Serve"
+
+rm(list=ls())
+library(tidyr)
+library(dplyr)
+library(tidyverse)
+myurl2<-("https://raw.githubusercontent.com/fivethirtyeight/data/master/police-locals/police-locals.csv")
+police_data <-read.csv(myurl2, header = TRUE, stringsAsFactors =FALSE)
+dimpfr <- dim(police_data) 
+head(police_data)
+str(police_data)
+```
+
+```{r}
+#Then we performed some transformaion in order to turn the data to "long" format, where I combined all the races into one column and spread In and Out of city police force into 2 columns respectively. Note: When a cell contains ** it means that there are fewer than 100 police officers of that race serving that city. 
+police_data<- police_data %>%
+  gather(Race, as.numeric(In_City,4:7,na.rm=FALSE))
+  
+head(police_data)
+
+```
+
+
+
+```{r}
+#police_data <- police_data %>%
+  #mutate(city = as.character(city),Out_of_City=1-In_City) %>%
+  #mutate(In_City= as.numeric(In_City),format(In_City, digits=2),
+         #Out_of_City= as.numeric(Out_of_City),format(Out_of_City, digits=2))
+#head(police_data_tidy)
+
+```
+
+
+
+```{r}
+#I wanted to show with ggplot the differemce between the cops living in the city and the ones that don't but I've been having really hard time with the previous code. 
+#g <- ggplot(police_data, aes(Race, In_City))
+#g + geom_bar(stat="identity", width = 0.5, fill="tomato2") + 
+      #labs(title="Bar Chart", 
+           #subtitle="In City Police", 
+           #caption="Source: fivethirteight.com") +
+      #theme(axis.text.x = element_text(angle=65, vjust=0.6))
+```
+
+```{r}
+#g <- ggplot(police_data, aes(Race,Out_City))
+#g + geom_bar(stat="identity", width = 0.5, fill="tomato2") + 
+      #labs(title="Bar Chart", 
+           #subtitle="In City Police", 
+           #caption="Source: fivethirteight.com") +
+      #theme(axis.text.x = element_text(angle=65, vjust=0.6))
+```
+
