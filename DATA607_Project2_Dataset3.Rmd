@@ -1,0 +1,66 @@
+---
+title: "DATA607_Project2_Dataset3"
+author: "Violeta Stoyanova"
+date: "3/11/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+```{r}
+rm(list=ls())
+library(tidyr)
+library(dplyr)
+library(tidyverse)
+
+#The third dataset is takes a closer look into world's total population from 1960 until 2016. The format of the dataset is "wide" and I'll will transform it into long in order to tidy it.  
+myurl3<-"https://raw.githubusercontent.com/VioletaStoyanova/Data-607_Project2/master/API_SP.POP.TOTL_DS2_en_csv_v2.csv"
+pop_total<-read.csv(myurl3, header = TRUE, stringsAsFactors = FALSE)
+head(pop_total)
+
+
+```
+
+```{r}
+#I wanted to look at the populaton every ten years. 
+PT_sel <- select(pop_total, c(1,2,9,19,29,39,49,59))
+PT_sel
+```
+
+```{r}
+#This is the point where I combine all of the years into one column and the number of people into another. 
+names(PT_sel)
+PT_sel_tidy <- PT_sel %>% gather("Year", "Population", 3:8)
+PT_sel_tidy %>% arrange(Country.Name,Year,Population) 
+head(PT_sel_tidy)
+```
+
+```{r}
+#I wanted to look at the countries with the highest raise in population, hence I performed some transformations using dplyr.
+country_list <- PT_sel_tidy %>% 
+  arrange(Population) %>% 
+  select(Country.Name)
+country_list  = country_list[1:10,]
+country_list  
+
+PT_sel_tidy10<- PT_sel_tidy %>%  filter(Country.Name %in% country_list)
+
+head(PT_sel_tidy10,3)
+
+```
+
+```{r}
+#The Analysis shows that Cayman Islnads have a significantly high raise in population over the past 58 years. 
+ggplot(PT_sel_tidy10, aes(x = Year , y = as.numeric(Population), group = Country.Name, colour = Country.Name)) +
+  geom_line() +
+  geom_point() +
+  theme_bw() +
+  ylab("Polulation") +
+  xlab("Year") +
+  ggtitle("Top 10 Countries with highest population raise") +
+  ylab("Population") +
+  theme(plot.title = element_text(lineheight = .8))
+
+```
+
